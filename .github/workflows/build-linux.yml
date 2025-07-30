@@ -18,6 +18,11 @@ jobs:
         with:
           flutter-version: '3.32.8'
 
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev
+
       - name: Enable Linux desktop support
         run: flutter config --enable-linux-desktop
 
