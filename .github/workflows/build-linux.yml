@@ -1,0 +1,36 @@
+name: Build Flutter Linux App
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    name: Build on Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+          channel: 'stable'
+
+      - name: Enable Linux desktop support
+        run: flutter config --enable-linux-desktop
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Linux release
+        run: flutter build linux
+
+      - name: Upload Linux build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-linux-app
+          path: build/linux/x64/release/bundle/
