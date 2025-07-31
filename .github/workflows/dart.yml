@@ -1,0 +1,34 @@
+name: macOS-app-build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    name: 💻 macOS Build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          architecture: x64
+
+      - run: flutter pub get
+
+      - run: flutter build macos --release
+
+      - name: Zip .app bundle
+        run: |
+          cd build/macos/Build/Products/Release
+          zip -r FlutterMacOSApp.zip Runner.app
+
+      - name: Upload macOS app zip to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/macos/Build/Products/Release/FlutterMacOSApp.zip
+          tag: v1.0
+          overwrite: true
+          body: "macOS app build"
